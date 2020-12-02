@@ -152,10 +152,11 @@ docker run --rm -it \
   -p 9090:9090 \
   -p 50070:50070 \
   -w /home/gpadmin/workspace \
+  -v ~/workspace/gpdb5:/home/gpadmin/workspace/gpdb \
   -v ~/workspace/pxf:/home/gpadmin/workspace/pxf \
   -v ~/workspace/singlecluster-HDP:/home/gpadmin/workspace/singlecluster \
   gcr.io/$GCR_PROJECT/gpdb-pxf-dev/gpdb6-centos7-test-pxf:latest /bin/bash -c \
-  "/home/gpadmin/workspace/pxf/dev/indocker_setup.bash && /sbin/service sshd start && su - gpadmin"
+  "/home/gpadmin/workspace/pxf/dev/set_up_gpadmin_user.bash && /usr/sbin/sshd && su - gpadmin"
 
 ```
 
@@ -165,6 +166,7 @@ docker run --rm -it \
 docker pull pivotaldata/gpdb-pxf-dev:centos6
 
 # If you want to use gdb to debug gpdb you need the --privileged flag in the command below
+# FIXME: we think this is for GPDB5 but there is no mention of which branch?
 docker run --rm -it \
   -p 5432:5432 \
   -p 5888:5888 \
@@ -175,11 +177,11 @@ docker run --rm -it \
   -p 9090:9090 \
   -p 50070:50070 \
   -w /home/gpadmin/workspace \
-  -v ~/workspace/gpdb:/home/gpadmin/workspace/gpdb \
+  -v ~/workspace/gpdb5:/home/gpadmin/workspace/gpdb \
   -v ~/workspace/pxf:/home/gpadmin/workspace/pxf \
   -v ~/workspace/singlecluster-HDP:/home/gpadmin/workspace/singlecluster \
-  pivotaldata/gpdb-pxf-dev:centos6 /bin/bash -c \
-  "/home/gpadmin/workspace/pxf/dev/set_up_gpadmin_user.bash && /sbin/service sshd start && su - gpadmin"
+  pivotaldata/gpdb-pxf-dev:centos7 /bin/bash -c \
+  "/home/gpadmin/workspace/pxf/dev/set_up_gpadmin_user.bash && /usr/sbin/sshd && su - gpadmin"
 ```
 
 ### Setup GPDB
@@ -187,6 +189,7 @@ docker run --rm -it \
 Configure, build and install GPDB. This will be needed only when you use the container for the first time with GPDB source.
 ```bash
 ~/workspace/pxf/dev/build_gpdb.bash
+# FIXME: fails because /usr/local/greenplum-db-devel doesn't exist
 ~/workspace/pxf/dev/install_gpdb.bash
 ```
 
@@ -218,6 +221,7 @@ Setup [User Impersonation](https://hadoop.apache.org/docs/current/hadoop-project
 Setup and start HDFS
 ```bash
 pushd ~/workspace/singlecluster/bin
+# FIXME: did not need echo?
 echo y | ./init-gphd.sh
 ./start-hdfs.sh
 popd
