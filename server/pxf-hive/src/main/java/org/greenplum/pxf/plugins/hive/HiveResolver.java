@@ -609,6 +609,9 @@ public class HiveResolver extends BasePlugin implements Resolver {
                 break;
             }
             case STRING: {
+                // FIXME: we need to think about properly escaping special characters in this string
+                // for top-level strings, we _might_ not need to escape, but for strings nested inside
+                // of complex types (e.g., {"field1": val}) we need to
                 val = (o != null) ? ((StringObjectInspector) oi).getPrimitiveJavaObject(o)
                         : null;
                 addOneFieldToRecord(record, DataType.TEXT,
